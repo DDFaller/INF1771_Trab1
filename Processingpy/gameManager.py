@@ -35,8 +35,12 @@ class gameManager:
         self.bronzeKnights = []
 
     def GetBoard(self):
-        return self.gameBoard.boardGrid
+        return self.gameBoard
 
+
+    def GenerateBoard(self,grid):
+        self.gameBoard.SetBoard(grid)
+        
     def StartGame(self):
         self.BuildGoldenKnightsList()
         self.BuildBronzeKnightsList()
