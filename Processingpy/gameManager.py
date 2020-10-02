@@ -1,6 +1,8 @@
 from board import board
 from knights import athenaKnight
 from moveSense import moveSense
+from boardInterpreter import boardInterpreter
+from knightTypes import knightTypes
 
 
 GoldenKnightsNames = [
@@ -33,14 +35,19 @@ class gameManager:
         self.gameBoard = board()
         self.goldenKnights = []
         self.bronzeKnights = []
-
+        self.interpreter = boardInterpreter("labirinto.txt")
+        self.StartGame()
+        gridInterpreted = self.interpreter.GetGrid()
+        self.GenerateBoard(gridInterpreted)
+        self.showing = False
+        
+        
     def GetBoard(self):
         return self.gameBoard
 
-
     def GenerateBoard(self,grid):
         self.gameBoard.SetBoard(grid)
-        
+
     def StartGame(self):
         self.BuildGoldenKnightsList()
         self.BuildBronzeKnightsList()
@@ -52,6 +59,9 @@ class gameManager:
             self.gameBoard.boardGrid[0][0].knights.append(bronzeKnight)
             bronzeKnight.position = (0,0)
 
+    def Display(self,blockSize,offsetx,offsety):
+        self.gameBoard.Display(blockSize,offsetx,offsety)
+
     def BuildGoldenKnightsList(self):
         for index in range(0,12):
             print(index)
@@ -62,6 +72,11 @@ class gameManager:
     def BuildBronzeKnightsList(self):
         for index in range(0,5):
             self.bronzeKnights.append(athenaKnight(knightTypes.BRONZEKNIGHT,BronzeKnightsNames[index],1 + 0.1 * index,5))
+            
+    def mousePressedListener(self,mousex,mousey):
+        if self.showing == False:
+            return 0
+        return self.gameBoard.mousePressedListener(mousex,mousey)
 
     def MoveKnight(self,knight,sense,value):
         x, y = knight.GetPosition()

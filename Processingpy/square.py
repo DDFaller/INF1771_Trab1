@@ -14,7 +14,7 @@ class square:
     def GetKnights(self):
         return self.knights
     
-    def Display(self,blockSize):
+    def Display(self,blockSize,offsetx, offsety):
         BLACK = (80,80,80)
         GREY = (173,173,173)
         WHITE =(222,222,222)
@@ -25,5 +25,5 @@ class square:
             rectColor = GREY
         if self.squareType == squareTypes.PLANE:
             rectColor = WHITE
-        rect(self.position[0] * blockSize,self.position[1] * blockSize,blockSize,blockSize)
+        rect(self.position[0] * blockSize + offsetx/2,self.position[1] * blockSize + offsety/2,blockSize,blockSize)
         fill(rectColor[0],rectColor[1],rectColor[2])
