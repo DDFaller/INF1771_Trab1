@@ -21,8 +21,10 @@ class gameMenu:
         interpreter = self.interpreterButton.mousePressedListener(x,y)
         gameButton = self.gameButton.mousePressedListener(x,y)
         if interpreter:
+            print("Interpreter clicked")
             return 1
         if gameButton:
+            print("GameManager clicked")
             return 2
     
         return 0

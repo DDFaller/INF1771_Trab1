@@ -27,3 +27,5 @@ class square:
             rectColor = WHITE
         rect(self.position[0] * blockSize + offsetx/2,self.position[1] * blockSize + offsety/2,blockSize,blockSize)
         fill(rectColor[0],rectColor[1],rectColor[2])
+        
+        

@@ -23,23 +23,30 @@ class boardInterpreter:
     def __init__(self, path):
         self.path = path
         self.grid = []
+        self.goldenKnightsPos = []
         self.ReadFile()
         self.showing = False
+        self.offsetX = 0
+        self.offsetY = 0
+        self.blockSize = 1
         
     def GetGrid(self):
         return self.grid
+
+    def GetGoldenPos(self):   
+        return self.goldenKnightsPos
 
     def ReadFile(self):
         file = open(self.path,"r")
         gridCount = 0
         for linha in file:
+            linha = linha.rstrip()
             self.grid.append([])
             gridElements = linha.split('_')
             for element in gridElements:
-                self.grid[gridCount].append(boardInterpreter.casas[element[0]])
+                self.grid[gridCount].append(boardInterpreter.casas[element])
             gridCount += 1
         file.close()
-        print(self.grid)
     
     def SetFile(self):
         file = open(self.path, "w")
@@ -110,14 +117,18 @@ class boardInterpreter:
     def mousePressedListener(self,mousex,mousey):
         if not self.showing:
             return 0
+        print("Mouse" + str((mousex,mousey)) + "Offset" + str((self.offsetX,self.offsetY)) + " Blocksize" + str((self.blockSize,self.blockSize * 42)))
         
-        x,y = self.CalculateGridElementClicked(mousex,mousey)
-        square = self.grid[x][y]
-        if square == squareTypes.MOUNTAIN:
-            self.grid[x][y] = squareTypes.ROCKY
-        elif square == squareTypes.ROCKY:
-            self.grid[x][y] = squareTypes.PLANE
-        elif square == squareTypes.PLANE:
-            self.grid[x][y] = squareTypes.MOUNTAIN
-            
-        return 1
+        if mousex >= self.offsetX and mousex <= self.offsetX + self.blockSize * 42:
+            if mousey >= self.offsetY and mousey <= self.offsetY + self.blockSize * 42:
+                x,y = self.CalculateGridElementClicked(mousex,mousey)
+                square = self.grid[x][y]
+                if square == squareTypes.MOUNTAIN:
+                    self.grid[x][y] = squareTypes.ROCKY
+                elif square == squareTypes.ROCKY:
+                    self.grid[x][y] = squareTypes.PLANE
+                elif square == squareTypes.PLANE:
+                    self.grid[x][y] = squareTypes.MOUNTAIN
+                return 1
+        
+        return 0

@@ -15,13 +15,17 @@ game = gameManager()
 menu = gameMenu(WIDTH,HEIGHT)
 interpreter = boardInterpreter("labirinto.txt")
 
-listeners_dict = {"Mouse pressed":[]}
+listeners_dict = {"Mouse pressed":[], "Key pressed":[]}
 
 listeners_dict["Mouse pressed"].append(interpreter)
 listeners_dict["Mouse pressed"].append(menu)
 listeners_dict["Mouse pressed"].append(game)
+listeners_dict["Key pressed"].append(game)
 
 menu.showing = True
+
+casaIcon = loadImage("casa0.jpg")
+game.SetIcon(casaIcon)
 
 def setup():
     size(WIDTH,HEIGHT)
@@ -47,11 +51,20 @@ def mousePressed():
             if isinstance(menu,gameMenu):
                 if code == 1:
                     interpreter.showing = True
+                    game.showing = False
                 elif code == 2:
                     game.showing = True
+                    interpreter.showing = False
                 if code != 0:
                     menu.showing = False  
-            return               
+            return           
+
+def keyPressed():
+    for listener in listeners_dict["Key pressed"]:
+        if listener.showing:
+            listener.keyPressedListener(key)
+            
+
 def assignMousePressed(classToAssign):
     listeners_dict["Mouse pressed"].append(classToAssign)
     

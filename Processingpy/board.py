@@ -1,6 +1,7 @@
 from squareTypes import squareTypes
 from square import square
 from random import randint
+from knightSelection import knightSelection
 
 class board:
     def __init__(self):
@@ -9,6 +10,9 @@ class board:
         self.offsetX = 0
         self.offsetY = 0
         self.blockSize = 1
+        self.initialSquare = self.boardGrid[4][36]
+        self.finalSquare = self.boardGrid[37][36]
+        print(self.initialSquare.position)
         
     def BuildBoard(self):
         for x in range(0,42):
@@ -40,7 +44,7 @@ class board:
         for row_list in self.boardGrid:
             for square_y in row_list:
                 square_y.Display(blockSize,offsetx ,offsety)
-
+        
     def PrintBoard(self):
         for x in range(0,42):
             for y in range(0,42):
@@ -49,12 +53,11 @@ class board:
     def CalculateGridElementClicked(self,mousex,mousey):
         x = (mousex - self.offsetX)/ self.blockSize
         y = (mousey - 10 - self.offsetY) / self.blockSize
-        print(x)
-        print(y)
         return x,y
                             
     def mousePressedListener(self,mousex,mousey):
-        x,y = self.CalculateGridElementClicked(mousex,mousey)
-        
-        
-        return 1
+        if mousex >= self.offsetX and mousex <= self.offsetX + self.blockSize * 42:
+            if mousey >= self.offsetY and mousey <= self.offsetY + self.blockSize * 42:
+                x,y = self.CalculateGridElementClicked(mousex,mousey)
+                return 1
+        return 0
