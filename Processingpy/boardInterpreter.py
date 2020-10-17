@@ -1,7 +1,6 @@
 
 from squareTypes import squareTypes
 
-
 class boardInterpreter:
     casas = {"1":squareTypes.CASA[0],
              "2":squareTypes.CASA[1],
@@ -29,25 +28,35 @@ class boardInterpreter:
         self.offsetX = 0
         self.offsetY = 0
         self.blockSize = 1
-        
+
     def GetGrid(self):
         return self.grid
 
-    def GetGoldenPos(self):   
+    def GetGoldenPos(self):
         return self.goldenKnightsPos
 
     def ReadFile(self):
         file = open(self.path,"r")
         gridCount = 0
+        
+        tempGrid = []
         for linha in file:
-            linha = linha.rstrip()
-            self.grid.append([])
+            linha = linha[:len(linha) -1]
+            #self.grid.append([])
+            tempGrid.append([])
             gridElements = linha.split('_')
             for element in gridElements:
-                self.grid[gridCount].append(boardInterpreter.casas[element])
+                #self.grid[gridCount].append(boardInterpreter.casas[element])
+                tempGrid[gridCount].append(boardInterpreter.casas[element])
             gridCount += 1
+
+        for x in range(0,len(tempGrid)):
+            self.grid.append([])
+            for y in range(0,len(tempGrid[x])):
+                self.grid[x].append(tempGrid[y][x])
         file.close()
-    
+
+
     def SetFile(self):
         file = open(self.path, "w")
         for linha in file:
@@ -55,16 +64,15 @@ class boardInterpreter:
                 file.write(boardInterpreter.TranslateTypeToString(element))
                 file.write('_')
             file.write('\n')
-                
-                
+
     def TranslateStringToType(strCode):
         return boardInterpreter[strCode]
-     
+
     def TranslateTypeToString(typeCode):
         for element in boardInterpreter.casas.keys:
             if boardInterpreter.casas[element] == typeCode:
                 return element
-                
+
     def CreateDefaultFile(self):
         file = open(self.path,'w')
         for row in range(0,42):
@@ -74,19 +82,13 @@ class boardInterpreter:
                 else:
                     file.write("x")
             file.write("\n")
-    
+
     def CalculateGridElementClicked(self,mousex,mousey):
         x = (mousex - self.offsetX)/ self.blockSize
         y = (mousey - 10 - self.offsetY) / self.blockSize
         print(x)
         print(y)
         return x,y
-        
-    def OpenGridWindow(self,width,height,edit):
-        size(width,height)
-
-    def setup(self):
-        background(150)
 
     def Display (self,blockSize,offsetx, offsety):
         self.blockSize = blockSize
@@ -110,15 +112,15 @@ class boardInterpreter:
                     rectColor = YELLOW
                 rect(x * blockSize + offsetx/2,j * blockSize + offsety/2,blockSize,blockSize)
                 fill(rectColor[0],rectColor[1],rectColor[2])
-                
-        
-                
-    
+
+
+
+
     def mousePressedListener(self,mousex,mousey):
         if not self.showing:
             return 0
         print("Mouse" + str((mousex,mousey)) + "Offset" + str((self.offsetX,self.offsetY)) + " Blocksize" + str((self.blockSize,self.blockSize * 42)))
-        
+
         if mousex >= self.offsetX and mousex <= self.offsetX + self.blockSize * 42:
             if mousey >= self.offsetY and mousey <= self.offsetY + self.blockSize * 42:
                 x,y = self.CalculateGridElementClicked(mousex,mousey)
@@ -130,5 +132,6 @@ class boardInterpreter:
                 elif square == squareTypes.PLANE:
                     self.grid[x][y] = squareTypes.MOUNTAIN
                 return 1
-        
+
+
         return 0

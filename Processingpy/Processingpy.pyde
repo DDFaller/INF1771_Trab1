@@ -24,39 +24,38 @@ listeners_dict["Key pressed"].append(game)
 
 menu.showing = True
 
-casaIcon = loadImage("casa0.jpg")
-game.SetIcon(casaIcon)
-
 def setup():
     size(WIDTH,HEIGHT)
 
-
 def draw():
     background(240)
-    
     if game.showing:
         game.Display(blockSize,offsetx,offsety)
-        
     if menu.showing:
-        menu.Display(blockSize,offsetx,offsety)
-        
+        menu.Display(blockSize,offsetx,offsety)    
     if interpreter.showing:
         interpreter.Display(blockSize,offsetx,offsety)
     
-
 def mousePressed():
     for listener in listeners_dict["Mouse pressed"]:
         if listener.showing:
             code = listener.mousePressedListener(mouseX,mouseY)
-            if isinstance(menu,gameMenu):
+            if isinstance(listener,gameMenu):
                 if code == 1:
                     interpreter.showing = True
                     game.showing = False
                 elif code == 2:
                     game.showing = True
                     interpreter.showing = False
+                    game.StartGame(interpreter.GetGrid())
                 if code != 0:
                     menu.showing = False  
+            if isinstance(listener,boardInterpreter):
+                if code == 2:
+                    game.showing = False
+                    interpreter.showing = False
+                    menu.showing = True
+            
             return           
 
 def keyPressed():

@@ -10,10 +10,17 @@ class board:
         self.offsetX = 0
         self.offsetY = 0
         self.blockSize = 1
-        self.initialSquare = self.boardGrid[4][36]
-        self.finalSquare = self.boardGrid[37][36]
-        print(self.initialSquare.position)
-        
+        #self.initialSquare = self.boardGrid[4][36]
+        #self.finalSquare = self.boardGrid[37][36]
+        self.initialSquare = self.boardGrid[37][37]
+        self.finalSquare = self.boardGrid[1][36]
+
+    def GetSquare(self,x,y):
+        if x >= 0 and x < 42:
+            if y >= 0 and y < 42:
+                return self.boardGrid[x][y]
+        return None
+
     def BuildBoard(self):
         for x in range(0,42):
             self.boardGrid.append([])
@@ -35,26 +42,37 @@ class board:
             self.boardGrid.append([])
             for y in range(0,42):
                 self.boardGrid[x].append(square(self,board[x][y],(x,y)))
-
+        self.initialSquare = self.boardGrid[37][37]
+        self.finalSquare = self.boardGrid[36][4]
 
     def Display(self,blockSize, offsetx, offsety):
         self.offsetX = offsetx/2
         self.offsetY = offsety/2
         self.blockSize = blockSize
-        for row_list in self.boardGrid:
-            for square_y in row_list:
-                square_y.Display(blockSize,offsetx ,offsety)
+        for x in range(0,len(self.boardGrid)):
+            for j in range(0,len(self.boardGrid[x])):
+                self.boardGrid[x][j].Display(blockSize,offsetx ,offsety)
+        #Initial position
         
+        fill(0,225,0)
+        rect(offsetx/2 + blockSize * self.initialSquare.position[0],offsety/2 + blockSize * self.initialSquare.position[1],blockSize,blockSize)
+
+
+        #Final position
+        fill(225,0,0)
+        rect(offsetx/2 + blockSize * self.finalSquare.position[0],offsety/2 + blockSize * self.finalSquare.position[1],blockSize,blockSize)
+
+
     def PrintBoard(self):
         for x in range(0,42):
             for y in range(0,42):
                 print(self.boardGrid[x][y].squareType)
-        
+
     def CalculateGridElementClicked(self,mousex,mousey):
         x = (mousex - self.offsetX)/ self.blockSize
         y = (mousey - 10 - self.offsetY) / self.blockSize
         return x,y
-                            
+
     def mousePressedListener(self,mousex,mousey):
         if mousex >= self.offsetX and mousex <= self.offsetX + self.blockSize * 42:
             if mousey >= self.offsetY and mousey <= self.offsetY + self.blockSize * 42:

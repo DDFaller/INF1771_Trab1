@@ -9,4 +9,6 @@ from boardInterpreter import boardInterpreter
 interpreter = boardInterpreter("labirinto.txt")
 gridInterpreted = interpreter.GetGrid()
 game = gameManager()
-game.GenerateBoard(gridInterpreted)
+
+game.StartGame(gridInterpreted)
+print(game.CheckVictory())

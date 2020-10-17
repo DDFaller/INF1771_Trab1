@@ -1,9 +1,11 @@
 from squareTypes import squareTypes
+from AValues import AValues
 class square:
     def __init__(self,board,squareType,position):
         self.squareType = squareType
         self.position = position
         self.knights = []
+        self.AValues = AValues()
 
     def GetSquareType(self):
         return self.squareType
@@ -13,7 +15,12 @@ class square:
 
     def GetKnights(self):
         return self.knights
-    
+
+    def GetGValue(self):
+        if not self.squareType in squareTypes.CASA:
+            return int(self.squareType)
+        return squareTypes.MOUNTAIN
+
     def Display(self,blockSize,offsetx, offsety):
         BLACK = (80,80,80)
         GREY = (173,173,173)
@@ -25,7 +32,5 @@ class square:
             rectColor = GREY
         if self.squareType == squareTypes.PLANE:
             rectColor = WHITE
-        rect(self.position[0] * blockSize + offsetx/2,self.position[1] * blockSize + offsety/2,blockSize,blockSize)
         fill(rectColor[0],rectColor[1],rectColor[2])
-        
-        
+        rect(self.position[0] * blockSize + offsetx/2,self.position[1] * blockSize + offsety/2,blockSize,blockSize)
