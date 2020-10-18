@@ -11,7 +11,7 @@ class GeneticAlgo:
         self.population = []
         self.matingPool = []
         self.generations = 0
-        self.mutationRate = 0.1
+        self.mutationRate = 0.3
         self.done = False
 
     def Initialize(self,path,bronzeKnights,goldenKnights):
@@ -71,12 +71,12 @@ class GeneticAlgo:
             parentA = self.matingPool[a]
             parentB = self.matingPool[b]
             child = parentA.Crossover(parentB)
-            #child.Mutate(self.mutationRate)
+            child.Mutate(self.mutationRate)
             self.population[index] = child
         self.generations += 1
 
     def Evaluate(self):
-        if self.generations == 6:
+        if self.generations == 30:
             self.done = True
             print("Generations " + str(self.generations))
             self.CalcFitness()

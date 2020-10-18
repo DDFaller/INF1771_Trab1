@@ -14,24 +14,24 @@ class BronzeGroup:
     def GetUnassignedKnight(self):
         lowestAssignment = 6
         lowestAssignedKnight = None
-        for k,v in self.ocurrences.items():
-            if v < lowestAssignment:
-                lowestAssignment = v
-                lowestAssignedKnight = k
+        for bronze in self.bronzeKnights:
+            if self.ocurrences[bronze] < lowestAssignment:
+                lowestAssignment = self.ocurrences[bronze]
+                lowestAssignedKnight = bronze
         return lowestAssignedKnight
 
     def GetAvailableKnights(self):
         availableKnights = []
-        for k,v in self.ocurrences.items():
-            if v < 5:
-                availableKnights.append(k)
+        for bronze in self.bronzeKnights:
+            if self.ocurrences[bronze] < 5:
+                availableKnights.append(bronze)
         return availableKnights
 
     def GetMostAvailableKnight(self):
         availableKnights = []
-        for k,v in self.ocurrences.items():
-            if v >= 5:
-                return k
+        for bronze in self.bronzeKnights:
+            if self.ocurrences[bronze] >= 5:
+                return bronze
 
     def RemoveKnightRamdonly(self,knight):
         positionsAvailable = []
@@ -46,7 +46,50 @@ class BronzeGroup:
         self.ocurrences[knight] -= 1
         return True
 
+    def AddKnightRamdonly(self,index):
+        listOfKnights = self.GetAvailableKnights()
+        if len(listOfKnights) == 0:
+            return
+        if len(listOfKnights) == 1:
+            knightToAssign = listOfKnights[0]
+        else:
+            knightToAssign = listOfKnights[randint(0,len(listOfKnights) - 1)]
+        while knightToAssign in self.fights[index] and len(listOfKnights) > 0:
+            if len(listOfKnights) == 1:
+                knightToAssign = listOfKnights[0]
+            else:
+                knightToAssign = listOfKnights[randint(0,len(listOfKnights) - 1)]
+            listOfKnights.remove(knightToAssign)
+        self.fights[index].append(knightToAssign)
+        self.ocurrences[knightToAssign] += 1
+
+    def ChangeKnightRamdonly(self,index):
+        self.RemoveKnightRamdonly(index)
+        self.AddKnightRamdonly(index)
+
+    def CheckForDuplicated(self):
+        for fightIndex in range(0,12):
+            knightsToRemove = {}
+            for knightIndex in range(0,len(self.fights[fightIndex])):
+                sum = 0
+                knight = self.fights[fightIndex][knightIndex]
+                if knight in knightsToRemove.keys():
+                    continue
+                for searchIndex in range(0,len(self.fights[fightIndex])):
+                    if self.fights[fightIndex][searchIndex] == knight:
+                        sum += 1
+                if sum >= 2:
+                    knightsToRemove[knight] = sum
+
+            for k in knightsToRemove.keys():
+                for i in range(knightsToRemove[k],1,-1):
+                    for searchIndex in range(len(self.fights[fightIndex]) -1,-1,-1):
+                        if self.fights[fightIndex][searchIndex] == k:
+                            self.fights[fightIndex].pop(searchIndex)
+                            self.ocurrences[k] -= 1
+
     def EnsureKnightRules(self):
+        self.CheckForDuplicated()
         for k,v in self.ocurrences.items():
             #if v > 5:
             for i in range(v,5,-1):
@@ -83,56 +126,39 @@ class BronzeGroup:
 
     def Generate(self,index):
         for knight in range(0,randint(1,5)):
-            listOfKnights = self.GetAvailableKnights()
-            if len(listOfKnights) == 0:
-                return
-            if len(listOfKnights) == 1:
-                knightToAssign = listOfKnights[0]
-            else:
-                knightToAssign = listOfKnights[randint(0,len(listOfKnights) - 1)]
-            while knightToAssign in self.fights[index] and len(listOfKnights) > 0:
-                if len(listOfKnights) == 1:
-                    knightToAssign = listOfKnights[0]
-                else:
-                    knightToAssign = listOfKnights[randint(0,len(listOfKnights) - 1)]
-                listOfKnights.remove(knightToAssign)
-            self.fights[index].append(knightToAssign)
-            self.ocurrences[knightToAssign] += 1
+            self.AddKnightRamdonly(knight)
 
     def Crossover(self, otherGroup):
         mergedList = []
         for x in range(0,12):
-            midpoint = randint(0,len(self.fights[x]))
+            if len(self.fights[x]) > len(otherGroup.fights[x]):
+                minRange = len(otherGroup.fights[x])
+            else:
+                minRange = len(self.fights[x])
+
+            midpoint = randint(0,minRange)
 
             #Midpoint in [0,len(self.fights) -1]
-            crossoverList = []
-            maxRange = 0
-            minRange = 0
-            if len(self.fights[x]) > len(otherGroup.fights[x]):
-                maxRange = len(self.fights[x])
-                minRange = len(otherGroup.fights[x]) -1
-                a = otherGroup.fights[x]
-                b = self.fights[x]
-            else:
-                maxRange = len(otherGroup.fights[x])
-                minRange = len(self.fights[x]) -1
-                a = self.fights[x]
-                b = otherGroup.fights[x]
-
-            for i in range(0,maxRange):
-                if i < midpoint:
-                    if i > minRange:
-                        break
-                    crossoverList.append(a[i])
-                else:
-                    crossoverList.append(b[i])
 
             #if len(otherGroup.fights[x]) > midpoint:
             #    crossoverList = self.fights[x][:midpoint] + otherGroup.fights[x][midpoint:]
             #else:
             #    crossoverList = otherGroup.fights[x][:midpoint] + self.fights[x][midpoint:]
+            crossoverList = self.fights[x] + otherGroup.fights[x]
             mergedList.append(crossoverList)
 
+            #print("\n \\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=\\=")
+            #print("Parent A => ")
+            #for a in range(0,len(self.fights[x])):
+            #    print(self.fights[x][a].name , end=",")
+            #print("")
+            #print("Parent B => ")
+            #for b in range(0,len(otherGroup.fights[x])):
+            #    print(otherGroup.fights[x][b].name , end=",")
+            #print("")
+            #print("Child => ")
+            #for child in range(0,len(crossoverList)):
+            #    print( crossoverList[child].name , end=",")
         generatedGroup = BronzeGroup(mergedList,self.bronzeKnights,self.goldenKnights)
         generatedGroup.UpdateOcurrences()
         generatedGroup.EnsureKnightRules()
@@ -152,13 +178,14 @@ class BronzeGroup:
     def Mutate(self,mutationRate):
         for fightIndex in range(0,len(self.fights)):
             if randrange(0,1) < mutationRate:
-                knightIndex = randint(0,len(self.fights[fightIndex]) - 1)
-                knights = list(self.ocurrences.keys())
-                newKnight = knights[randint(0,len(knights) - 1)]
-                self.ocurrences[self.fights[fightIndex][knightIndex]] -= 1
-                self.ocurrences[newKnight] += 1
-                self.fights[fightIndex][knightIndex] = newKnight
-                self.EnsureKnightRules()
+                case = randrange(0,1)
+                if case > 0 and case < 0.33:
+                    self.AddKnightRamdonly(fightIndex)
+                elif case >= 0.33 and case <0.66:
+                    self.RemoveKnightRamdonly(fightIndex)
+                else:
+                    self.ChangeKnightRamdonly(fightIndex)
+        self.EnsureKnightRules()
 
     def EstimateTime(self):
         sum = 0
@@ -170,11 +197,13 @@ class BronzeGroup:
         return sum
 
     def CalcFitness(self,target):
+        #[][][][][][][][][][][][]
         score = self.EstimateTime()
         self.fitness = target/score
         if self.fitness > 1:
             print("Encontrou fitness otimizado score: " + str(score))
             #self.Show()
+            
 
 
     def Show(self):
