@@ -62,7 +62,7 @@ class APathFinder:
 
         for neighbor in self.GetNeighbors(current.position[0],current.position[1]):
 
-            if not(neighbor in self.closedPath) and not(neighbor.squareType== squareTypes.MOUNTAIN):
+            if not(neighbor in self.closedPath) and not(neighbor.squareType == squareTypes.MOUNTAIN):
                 tempG = current.AValues.g + neighbor.squareType
 
                 betterPath = False

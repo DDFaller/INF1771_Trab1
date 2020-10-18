@@ -26,6 +26,7 @@ menu.showing = True
 
 def setup():
     size(WIDTH,HEIGHT)
+    frameRate(120)
 
 def draw():
     background(240)

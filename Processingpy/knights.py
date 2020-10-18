@@ -10,18 +10,27 @@ class athenaKnight:
         self.position = (0,0)
         self.restTime = 0
 
+    def __hash__(self):
+        return hash(self.name)
+
+
+
     def CalculateTimeToDefeat(self,knights):
+        #print("Boss:" + self.name )
+        #[print(x.name) for x in knights]
         if self.energyPoints == 0:
             return 0
         sum = 0.0
         for knight in knights:
             sum += knight.cosmicPower
+        if sum == 0:
+            input("Travo")
+
         return self.cosmicPower/sum
 
     def Defeat(self,knights):
         if len(knights) == 0:
-            return False
-
+            return
         time = self.CalculateTimeToDefeat(knights)
         if time == 0:
             return True

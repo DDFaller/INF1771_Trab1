@@ -6,6 +6,7 @@ from knightTypes import knightTypes
 from knightSelection import knightSelection
 from squareTypes import squareTypes
 from APathFinder import APathFinder
+from GeneticAlgo import GeneticAlgo
 
 GoldenKnightsNames = [
 "Mu de Aries",
@@ -46,6 +47,7 @@ class gameManager:
         self.gameBoard = board()
         self.interpreter = boardInterpreter("labirinto.txt")
         self.pathFinder = APathFinder(self.gameBoard)
+        self.geneticAlgo = GeneticAlgo()
         self.showing = False
         self.findPath = False
         self.ResetGame()
@@ -91,6 +93,9 @@ class gameManager:
 
         self.knightSelect = knightSelection(self.bronzeKnights,BronzeKnightsNames,BronzeKnightsColors)
         self.pathFinder.FindPath([x.GetPosition() for x in self.goldenKnights])
+        while not(self.geneticAlgo.done == True):
+            self.geneticAlgo.Initialize(self.pathFinder.path,self.bronzeKnights,self.goldenKnights)
+            self.geneticAlgo.Execute()
 
     def BuildGoldenKnightsList(self):
         for index in range(0,12):
@@ -123,6 +128,9 @@ class gameManager:
         self.knightSelect.Display()
         if self.findPath:
             self.pathFinder.Display(blockSize,offsetx,offsety)
+            if not(self.pathFinder.path == []):
+                self.geneticAlgo.Initialize(self.pathFinder.path,self.bronzeKnights,self.goldenKnights)
+                self.geneticAlgo.Execute()
 
     #Father class ProcessingPY checks if this is valid to receive clicks
     #Process knight selection menu and clicks on board

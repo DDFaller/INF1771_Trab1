@@ -13,7 +13,7 @@ class board:
         #self.initialSquare = self.boardGrid[4][36]
         #self.finalSquare = self.boardGrid[37][36]
         self.initialSquare = self.boardGrid[37][37]
-        self.finalSquare = self.boardGrid[1][36]
+        self.finalSquare = self.boardGrid[36][4]
 
     def GetSquare(self,x,y):
         if x >= 0 and x < 42:
@@ -53,7 +53,7 @@ class board:
             for j in range(0,len(self.boardGrid[x])):
                 self.boardGrid[x][j].Display(blockSize,offsetx ,offsety)
         #Initial position
-        
+
         fill(0,225,0)
         rect(offsetx/2 + blockSize * self.initialSquare.position[0],offsety/2 + blockSize * self.initialSquare.position[1],blockSize,blockSize)
 

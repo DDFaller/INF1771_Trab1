@@ -10,5 +10,5 @@ interpreter = boardInterpreter("labirinto.txt")
 gridInterpreted = interpreter.GetGrid()
 game = gameManager()
 
+genes = game.geneticAlgo
 game.StartGame(gridInterpreted)
-print(game.CheckVictory())
