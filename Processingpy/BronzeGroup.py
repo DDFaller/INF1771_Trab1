@@ -197,13 +197,16 @@ class BronzeGroup:
         return sum
 
     def CalcFitness(self,target):
+        #Adicionar peso a cada casa
+        #Simular jogada ideal
+        #Computar cavaleiros por casa * peso da casa
         #[][][][][][][][][][][][]
         score = self.EstimateTime()
         self.fitness = target/score
         if self.fitness > 1:
             print("Encontrou fitness otimizado score: " + str(score))
             #self.Show()
-            
+
 
 
     def Show(self):
