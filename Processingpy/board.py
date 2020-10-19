@@ -66,7 +66,8 @@ class board:
     def PrintBoard(self):
         for x in range(0,42):
             for y in range(0,42):
-                print(self.boardGrid[x][y].squareType)
+                #print(self.boardGrid[x][y].squareType)
+                pass
 
     def CalculateGridElementClicked(self,mousex,mousey):
         x = (mousex - self.offsetX)/ self.blockSize

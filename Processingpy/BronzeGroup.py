@@ -1,15 +1,17 @@
 from random import randint,randrange
-
+from math import pow
 
 class BronzeGroup:
     def __init__(self,knightList,bronzeKnights,goldenKnights):
         self.goldenKnights = goldenKnights
         self.bronzeKnights = bronzeKnights
-        self.fights = knightList# [12][0,5] bronze
         self.ocurrences = {}
+        self.fights = knightList# [12][0,5] bronze
         self.fitness = 1000
+        self.ExpectedSolutionTime = 0
         for knight in bronzeKnights:
             self.ocurrences[knight] = 0
+        self.filePath = "otimizedGroup.txt"
 
     def GetUnassignedKnight(self):
         lowestAssignment = 6
@@ -194,20 +196,29 @@ class BronzeGroup:
             if len(self.fights[fightIndex]) == 0:
                 self.EnsureKnightRules()
             sum += goldenKnight.CalculateTimeToDefeat(self.fights[fightIndex])
+        self.ExpectedSolutionTime = sum
+        return sum
+
+    def EstimateScore(self):
+        sum = 0
+        for fightIndex in range (0,len(self.fights)):
+            if len(self.fights[fightIndex]) == 0:
+                self.EnsureKnightRules()
+
+            sum += len(self.fights[fightIndex]) * fightIndex
         return sum
 
     def CalcFitness(self,target):
+
         #Adicionar peso a cada casa
         #Simular jogada ideal
         #Computar cavaleiros por casa * peso da casa
         #[][][][][][][][][][][][]
-        score = self.EstimateTime()
-        self.fitness = target/score
+        score = self.EstimateScore()
+        self.fitness = score/target
+        self.fitness = pow(self.fitness,4)
         if self.fitness > 1:
             print("Encontrou fitness otimizado score: " + str(score))
-            #self.Show()
-
-
 
     def Show(self):
         for k,v in self.ocurrences.items():
@@ -217,3 +228,51 @@ class BronzeGroup:
             for knight in self.fights[index]:
                 print(knight.name)
             print("")
+
+    def ReadFights(self,lineInfo):
+        self.fights = []
+        fightsStr = lineInfo[1]
+        knightsToFight = fightsStr.split("#")
+
+        for i in range(1,len(knightsToFight) - 1):
+            self.fights.append([])
+            knightVector = knightsToFight[i]
+
+            knights = knightVector.split(",")
+            for knightName in knights:
+                for knight in self.bronzeKnights:
+                    if knight.name == knightName:
+                        self.fights[i-1].append(knight)
+
+    def ReadBronzeGroup(self):
+        file = open(self.filePath,"r")
+        for line in file:
+            line = line.rstrip()
+            lineInfo = line.split("=")
+            if lineInfo[0] == "fights":
+                self.ReadFights(lineInfo)
+            if lineInfo[0] == "fitness":
+                self.fitness = float(lineInfo[1])
+            if lineInfo[0] == "ExpectedSolutionTime":
+                self.ExpectedSolutionTime = float(lineInfo[1])
+
+    def WriteFight(self, file, fight):
+        for i in range(len(fight) - 1):
+            file.write(fight[i].name)
+            file.write(',')
+
+        if (len(fight) > 0):
+            file.write(fight[len(fight)-1].name)
+
+    def WriteFights(self, file):
+        file.write('#')
+        for i in range(len(self.fights) ):
+            self.WriteFight(file, self.fights[i])
+            file.write('#')
+
+    def WriteBronzeGroup(self):
+        with open(self.filePath, "w") as file:
+            file.write("fights=")
+            self.WriteFights(file)
+            file.write("\nfitness="+str(self.fitness))
+            file.write("\nExpectedSolutionTime="+str(self.ExpectedSolutionTime))

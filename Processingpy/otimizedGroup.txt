@@ -1,0 +1,3 @@
+fights=#Hyoga#Shun#Hyoga#Shiryu,Shun#Seiya#Shiryu,Seiya#Shiryu#Ikki,Shun#Shiryu,Ikki,Shun#Seiya,Ikki,Hyoga,Shun#Hyoga,Seiya,Shiryu,Ikki#Seiya,Hyoga,Ikki#
+fitness=8.611850497913729e-05
+ExpectedSolutionTime=444.6588095734437

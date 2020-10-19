@@ -11,6 +11,7 @@ class APathFinder:
         self.path = []
         self.showing = True
         self.breakpoints = []
+        self.pathCost = 0
 
     def FindPath(self,breakpoints):
         self.openPath.append(self.board.initialSquare)
@@ -19,6 +20,9 @@ class APathFinder:
 
     def SetPath(self,path):
         self.path = path
+        for square in path:
+            if square.squareType == squareTypes.MOUNTAIN or square.squareType ==squareTypes.PLANE  or square.squareType == squareTypes.ROCKY :
+                self.pathCost += square.squareType
 
     def GetNeighbors(self,x,y):
         squaresAround = []
@@ -47,6 +51,7 @@ class APathFinder:
         if current.position == self.board.finalSquare.position:
             path = []
             temp = current
+            path.append(self.board.finalSquare)
             while(not(temp.AValues.previous == None)):
                 path.append(temp.AValues.previous)
                 temp = temp.AValues.previous

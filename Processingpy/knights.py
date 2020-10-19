@@ -1,5 +1,5 @@
 from knightTypes import knightTypes
-
+from math import ceil
 
 class athenaKnight:
     def __init__(self,knightType,name,cosmicPower,energyPoint):
@@ -9,11 +9,10 @@ class athenaKnight:
         self.energyPoints = energyPoint
         self.position = (0,0)
         self.restTime = 0
+        self.battle = False
 
     def __hash__(self):
         return hash(self.name)
-
-
 
     def CalculateTimeToDefeat(self,knights):
         #print("Boss:" + self.name )
@@ -25,21 +24,22 @@ class athenaKnight:
             sum += knight.cosmicPower
         if sum == 0:
             input("Travo")
-
         return self.cosmicPower/sum
 
     def Defeat(self,knights):
         if len(knights) == 0:
             return
+        print(self.name + " Vs. " )
+        for knight in knights:
+            print(knight.name + ",")
         time = self.CalculateTimeToDefeat(knights)
-        if time == 0:
-            return True
+
+        self.battle = True
         self.energyPoints -= 1
         for knight in knights:
             knight.energyPoints -= 1
-            knight.restTime += time
+            knight.restTime += ceil(time)
         return True
-
 
     def GetName(self):
         return self.name
@@ -64,3 +64,6 @@ class athenaKnight:
         self.position = (self.position[0] + x, self.position[1] + y)
 
         return True
+
+    def WriteFile(self):
+        return self.name

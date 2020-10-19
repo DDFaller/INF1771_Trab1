@@ -7,12 +7,14 @@ class GeneticAlgo:
         self.path = []
         self.bronzeKnights = None
         self.goldenKnights = None
-        self.elementsInPopulation = 1000
+        self.elementsInPopulation = 50
         self.population = []
         self.matingPool = []
         self.generations = 0
-        self.mutationRate = 0.3
+        self.mutationRate = 0.1
         self.done = False
+        self.solution = None
+        self.solutionTime = 0
 
     def Initialize(self,path,bronzeKnights,goldenKnights):
         self.path = path
@@ -46,11 +48,23 @@ class GeneticAlgo:
         #    print(len(self.population[index].fights[0]))
 
     def CalcFitness(self):
+        targetIdeal = []
+        for i in range(0,12):
+            if i >= 9:
+                targetIdeal.append(5)
+            if i >= 7 and i < 9:
+                targetIdeal.append(2)
+            if i < 7:
+                targetIdeal.append(1)
+        targetSum = 0
+        for i in range(0,12):
+            targetSum += targetIdeal[i] * i**2
+
         for elem in self.population:
-            elem.CalcFitness(300)
+            elem.CalcFitness(targetSum)
 
     def p5map(self,n, start1, stop1, start2, stop2):
-        return ((n-start1)/(stop1-start1))*(stop2-start2)+start2
+        return ((n-start1)/(stop1 -start1))*(stop2-start2)+start2
 
     def NaturalSelection(self):
         maxFitness = 0
@@ -76,7 +90,16 @@ class GeneticAlgo:
         self.generations += 1
 
     def Evaluate(self):
-        if self.generations == 30:
+        if self.generations == 50:
             self.done = True
             print("Generations " + str(self.generations))
             self.CalcFitness()
+            biggerFitness = 0
+            otimizedBronzeGroup = None
+            for index in range(0,len(self.population)):
+                if self.population[index].fitness > biggerFitness:
+                    biggerFitness = self.population[index].fitness
+                    otimizedBronzeGroup = self.population[index]
+            self.solutionTime = otimizedBronzeGroup.EstimateTime()
+            self.solution = otimizedBronzeGroup
+            otimizedBronzeGroup.WriteBronzeGroup()

@@ -9,6 +9,8 @@ from boardInterpreter import boardInterpreter
 interpreter = boardInterpreter("labirinto.txt")
 gridInterpreted = interpreter.GetGrid()
 game = gameManager()
+game.runGeneticCode = True
 
-genes = game.geneticAlgo
+
 game.StartGame(gridInterpreted)
+genes = game.geneticAlgo
